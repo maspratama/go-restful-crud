@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"encoding/json"
 	"github.com/julienschmidt/httprouter"
 	"github.com/maspratama/go-restful-crud/helper"
 	"github.com/maspratama/go-restful-crud/models/web"
@@ -15,10 +14,8 @@ type CategoryControllerImpl struct {
 }
 
 func (c *CategoryControllerImpl) Create(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	decoder := json.NewDecoder(r.Body)
 	categoryCreateRequest := web.CategoryCreateRequest{}
-	err := decoder.Decode(&categoryCreateRequest)
-	helper.PanicIfError(err)
+	helper.ReadFromRequestBody(r, &categoryCreateRequest)
 
 	// dari controller panggil service Create
 	categoryResponse := c.CategoryService.Create(r.Context(), categoryCreateRequest)
@@ -28,17 +25,12 @@ func (c *CategoryControllerImpl) Create(w http.ResponseWriter, r *http.Request, 
 		Data:            categoryResponse,
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(webResponse)
-	helper.PanicIfError(err)
+	helper.WriteToResponseBody(w, webResponse)
 }
 
 func (c *CategoryControllerImpl) Update(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	decoder := json.NewDecoder(r.Body)
 	categoryUpdateRequest := web.CategoryUpdateRequest{}
-	err := decoder.Decode(&categoryUpdateRequest)
-	helper.PanicIfError(err)
+	helper.ReadFromRequestBody(r, &categoryUpdateRequest)
 
 	categoryId := params.ByName("categoryId")
 	id, err := strconv.Atoi(categoryId)
@@ -53,10 +45,7 @@ func (c *CategoryControllerImpl) Update(w http.ResponseWriter, r *http.Request, 
 		Data:            categoryResponse,
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(webResponse)
-	helper.PanicIfError(err)
+	helper.WriteToResponseBody(w, webResponse)
 }
 
 func (c *CategoryControllerImpl) Delete(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -70,10 +59,7 @@ func (c *CategoryControllerImpl) Delete(w http.ResponseWriter, r *http.Request, 
 		ResponseMessage: "OK",
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(webResponse)
-	helper.PanicIfError(err)
+	helper.WriteToResponseBody(w, webResponse)
 }
 
 func (c *CategoryControllerImpl) FindById(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -88,10 +74,7 @@ func (c *CategoryControllerImpl) FindById(w http.ResponseWriter, r *http.Request
 		Data:            categoryResponse,
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(webResponse)
-	helper.PanicIfError(err)
+	helper.WriteToResponseBody(w, webResponse)
 }
 
 func (c *CategoryControllerImpl) FindAll(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
@@ -102,8 +85,5 @@ func (c *CategoryControllerImpl) FindAll(w http.ResponseWriter, r *http.Request,
 		Data:            categoryResponse,
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err := encoder.Encode(webResponse)
-	helper.PanicIfError(err)
+	helper.WriteToResponseBody(w, webResponse)
 }
